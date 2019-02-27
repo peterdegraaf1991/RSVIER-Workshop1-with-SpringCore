@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.*;
 
 import jline.internal.Log;
 import model_class.Account;
@@ -14,10 +16,17 @@ import utility.Hashing.CannotPerformOperationException;
 import view.AccountView;
 import view.LoginView;
 
+
+@Component
 public class AccountController extends Controller {
-	AccountView accountView = new AccountView();
-	CustomerController customerController = new CustomerController();
-	LoginView loginView = new LoginView();
+	@Autowired 
+	AccountView accountView;
+	
+	@Autowired 
+	CustomerController customerController;
+	
+	@Autowired 
+	LoginView loginView;
 
 	
 	private static final Logger LOG = LoggerFactory

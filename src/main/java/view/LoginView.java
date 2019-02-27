@@ -1,7 +1,10 @@
 package view;
 
+import org.springframework.stereotype.Component;
+
 import dao.DaoFactory;
 
+@Component
 public class LoginView extends View {
 
 	public void printMenuHeader() {

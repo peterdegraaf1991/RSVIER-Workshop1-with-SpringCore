@@ -9,9 +9,11 @@ import model_class.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import utility.DatabaseConnection;
 
+@Component
 public class AccountTypeDaoImpl implements AccountTypeDao {
 
 	private static final Logger LOG = LoggerFactory

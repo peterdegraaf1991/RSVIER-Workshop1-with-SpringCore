@@ -1,11 +1,16 @@
 package controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import view.View;
 
+@Component
 public abstract class Controller {
 	public abstract void runController();
 
-	View view = new View();
+	@Autowired
+	View view;
 
 	static boolean newView = true;
 

@@ -8,10 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class AccountView extends View {
+@Component
+public class AccountView extends View{
+
 	private TextIO textIO = TextIoFactory.getTextIO();
-	TextTerminal<?> terminal = textIO.getTextTerminal();
+	private TextTerminal<?> terminal = textIO.getTextTerminal();
 
 	public void printMenuHeader() {
 		terminal.println("Account Menu\n");

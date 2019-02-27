@@ -5,8 +5,10 @@ import java.util.concurrent.TimeUnit;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
+import org.springframework.stereotype.Component;
 
-public class View {
+@Component
+public class View{
 	public TextIO textIO = TextIoFactory.getTextIO();
 	TextTerminal<?> terminal = textIO.getTextTerminal();
 

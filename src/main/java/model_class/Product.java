@@ -2,6 +2,9 @@ package model_class;
 
 import java.math.BigDecimal;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Product {
 
 	private String name;

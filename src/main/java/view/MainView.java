@@ -1,6 +1,9 @@
 package view;
 
-public class MainView extends View {
+import org.springframework.stereotype.Component;
+
+@Component
+public class MainView extends View{
 
 	@Override
 	public void printMenuHeader() {

@@ -1,5 +1,8 @@
 package model_class;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class OrderLine {
 
 	private int id;

@@ -2,13 +2,19 @@ package controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import model_class.OrderLine;
 import model_class.Product;
 import dao.DaoFactory;
 import view.ProductView;
 
+@Component
 public class ProductController extends Controller {
-	ProductView productView = new ProductView();
+	
+	@Autowired
+	ProductView productView;
 
 	@Override
 	public void runController() {

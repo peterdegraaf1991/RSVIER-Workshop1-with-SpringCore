@@ -3,12 +3,18 @@ package view;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import controller.OrderLineController;
 import model_class.OrderLine;
 
-public class OrderLineView extends View {
+@Component
+public class OrderLineView extends View{
 
+	@Autowired
+	OrderLineController orderLineController;
+	
 	public void productAlreadyAdded() {
 		terminal.println("This Product already has been added to this order");
 	}
@@ -59,7 +65,6 @@ public class OrderLineView extends View {
 				+ StringUtils.center("Amount", 11));
 		terminal.println();
 		terminal.println("---------------------------------------------------");
-		OrderLineController orderLineController = new OrderLineController();
 		for (int i = 0; i < orderLineList.size(); i++) {
 
 			terminal.print(StringUtils.center(Integer.toString(i), 11)
@@ -83,7 +88,6 @@ public class OrderLineView extends View {
 				+ StringUtils.center("Amount", 11));
 		terminal.println();
 		terminal.println("-----------------------------------------");
-		OrderLineController orderLineController = new OrderLineController();
 		for (int i = 0; i < orderLineList.size(); i++) {
 
 			terminal.print(StringUtils.center(orderLineController

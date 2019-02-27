@@ -2,9 +2,12 @@ package view;
 
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
 import model_class.Customer;
 
-public class CustomerView extends View {
+@Component
+public class CustomerView extends View{
 
 	@Override
 	public void printMenuHeader() {

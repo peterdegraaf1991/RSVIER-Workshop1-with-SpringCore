@@ -3,16 +3,26 @@ package controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import dao.DaoFactory;
 import view.OrderLineView;
 import model_class.OrderLine;
 import model_class.Product;
 
+@Component
 public class OrderLineController {
 
-	ProductController productController = new ProductController();
-	OrderLineView orderLineView = new OrderLineView();
+	@Autowired
+	ProductController productController;
+	
+	@Autowired
+	OrderLineView orderLineView;
 
+	@Autowired
+	OrderLine orderLine;
+	
 	// OrderLine Controller
 	public List<OrderLine> createOrderLines(int orderId) {
 		List<OrderLine> orderLineList = new ArrayList<>();
@@ -24,7 +34,6 @@ public class OrderLineController {
 			if (productList.contains(product)) {
 				orderLineView.productAlreadyAdded();
 			} else {
-				OrderLine orderLine = new OrderLine();
 				orderLine.setProduct(product);
 				orderLine.setAmount(orderLineView.requestAmount(product
 						.getStock()));

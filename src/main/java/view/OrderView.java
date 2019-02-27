@@ -5,12 +5,18 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import controller.OrderController;
 import model_class.Order;
 
+@Component
 public class OrderView extends View {
 
+	@Autowired
+	OrderController orderController;
+	
 	@Override
 	public void printMenuHeader() {
 		terminal.println("Order Menu\n");
@@ -62,7 +68,6 @@ public class OrderView extends View {
 		terminal.println("--------------------------------------------------------------------------------------");
 
 		for (int i = 0; i < orderList.size(); i++) {
-			OrderController orderController = new OrderController();
 			String name = orderController.getCustomerNameOfOrder(orderList.get(i).getCustomer().getId());
 			
 			terminal.print(StringUtils.center(Integer.toString(i), 11)
@@ -127,7 +132,6 @@ public class OrderView extends View {
 		terminal.println("---------------------------------------------------------------------------");
 
 		for (int i = 0; i < orderList.size(); i++) {
-			OrderController orderController = new OrderController();
 			String name = orderController.getCustomerNameOfOrder(orderList.get(i).getCustomer().getId());
 			terminal.print(StringUtils.center(Integer.toString(orderList.get(i).getId()), 10)
 					+ StringUtils.center(name,25)

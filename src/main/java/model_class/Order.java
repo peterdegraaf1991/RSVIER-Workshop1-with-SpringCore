@@ -3,6 +3,9 @@ package model_class;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Order {
 	private int id;
 	private BigDecimal totalCost;

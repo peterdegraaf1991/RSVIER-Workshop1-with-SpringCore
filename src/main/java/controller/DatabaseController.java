@@ -8,11 +8,14 @@ import utility.DatabaseConnection;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DatabaseController {
 	private TextIO textIO = TextIoFactory.getTextIO();
 	TextTerminal<?> terminal = textIO.getTextTerminal();
 
+	
 	public static void initDatabase() {
 
 		try (Connection connection = DatabaseConnection.INSTANCE

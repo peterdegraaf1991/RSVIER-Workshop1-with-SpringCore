@@ -9,15 +9,21 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import utility.DatabaseConnection;
 import model_class.OrderLine;
 import model_class.Product;
 
+@Component
 public class OrderLineDaoImpl implements OrderLineDao {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(OrderLineDaoImpl.class);
 
+	@Autowired
+	ProductDao productDaoImpl;
+	
 	@Override
 	public int createOrderLine(OrderLine orderLine) {
 		String query = "INSERT INTO order_line (id, product_id, amount, order_id) VALUES( ?, ?, ?,?)";
@@ -58,7 +64,6 @@ public class OrderLineDaoImpl implements OrderLineDao {
 			orderLine.setId(resultSet.getInt("id"));
 			orderLine.setAmount(resultSet.getInt("amount"));
 			orderLine.setOrderId(resultSet.getInt("order_id"));
-			ProductDao productDaoImpl = new ProductDaoImpl();
 			// uses resultSet from readOrderLine or readProduct?
 			Product product = productDaoImpl.readProductById(resultSet
 					.getInt("product_id"));

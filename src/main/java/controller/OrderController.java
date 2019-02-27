@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import model_class.Customer;
 import model_class.Order;
 import model_class.OrderLine;
@@ -15,16 +18,30 @@ import view.OrderLineView;
 import view.OrderView;
 import view.ProductView;
 
+@Component
 public class OrderController extends Controller {
 
-	CustomerController customerController = new CustomerController();
-	ProductController productController = new ProductController();
-	OrderLineController orderLineController = new OrderLineController();
+	@Autowired
+	CustomerController customerController;
+	
+	@Autowired
+	ProductController productController;
+	
+	@Autowired
+	OrderLineController orderLineController;
 
-	OrderView orderView = new OrderView();
-	CustomerView customerView = new CustomerView();
-	OrderLineView orderLineView = new OrderLineView();
-	ProductView productView = new ProductView();
+	@Autowired
+	OrderView orderView;
+	
+	@Autowired
+	CustomerView customerView;
+	
+	@Autowired
+	OrderLineView orderLineView;
+	
+	@Autowired
+	ProductView productView;
+	
 
 	@Override
 	public void runController() {

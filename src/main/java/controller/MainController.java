@@ -1,10 +1,27 @@
 package controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import view.MainView;
 
+@Component
 public class MainController extends Controller {
-	MainView mainView = new MainView();
-
+	@Autowired
+	MainView mainView;
+	
+	@Autowired
+	AccountController accountController;
+	
+	@Autowired
+	OrderController orderController;
+	
+	@Autowired
+	ProductController productController;
+	
+	@Autowired
+	CustomerController customerController;
+	
 	@Override
 	public void runController() {
 		int keuze = 1;
@@ -21,22 +38,18 @@ public class MainController extends Controller {
 			keuze = mainView.requestMenuOption();
 			switch (keuze) {
 			case 1: // Account Management
-				AccountController accountController = new AccountController();
 				accountController.runController();
 				break;
 
 			case 2: // Orders
-				OrderController orderController = new OrderController();
 				orderController.runController();
 				break;
 
 			case 3: // Products
-				ProductController productController = new ProductController();
 				productController.runController();
 				break;
 
 			case 4: // Customer
-				CustomerController customerController = new CustomerController();
 				customerController.runController();
 				break;
 

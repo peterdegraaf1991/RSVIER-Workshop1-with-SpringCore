@@ -2,17 +2,28 @@ package controller;
 
 import model_class.Account;
 import model_class.Customer;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import dao.DaoFactory;
 import view.LoginView;
 import utility.Hashing;
 import utility.Hashing.CannotPerformOperationException;
 import utility.Hashing.InvalidHashException;
 
+@Component
 public class LoginController extends Controller {
-
+// Geen autowire op static methodes?
 	public static Account loggedInAccount = new Account();
-	static Customer loggedInCustomer = new Customer();
-	private LoginView loginView = new LoginView();
+	public static Customer loggedInCustomer = new Customer();
+	
+	
+	@Autowired
+	private MainController mainController;
+	
+	@Autowired
+	private LoginView loginView;
 
 
 	public void runController() {
@@ -53,7 +64,6 @@ public class LoginController extends Controller {
 				if (Hashing.verifyPassword(loginView.requestInputPassword(), hash) == true) {
 					loginView.loginSuccesfull();
 					loggedInCustomer = loggedInAccount.getCustomer();
-					MainController mainController = new MainController();
 					mainController.runController();
 				} else {
 					loginView.incorrectEmailOrPassword();

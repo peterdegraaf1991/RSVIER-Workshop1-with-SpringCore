@@ -2,13 +2,18 @@ package controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import model_class.Account;
 import model_class.Customer;
 import dao.DaoFactory;
 import view.CustomerView;
 
+@Component
 public class CustomerController extends Controller {
-	CustomerView customerView = new CustomerView();
+	@Autowired
+	CustomerView customerView;
 
 	@Override
 	public void runController() {

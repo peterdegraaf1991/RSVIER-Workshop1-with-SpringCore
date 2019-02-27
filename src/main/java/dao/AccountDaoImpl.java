@@ -12,12 +12,18 @@ import model_class.Customer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import utility.DatabaseConnection;
 
+@Component
 public class AccountDaoImpl implements AccountDao {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AccountDaoImpl.class);
+	
+	@Autowired
+	CustomerDao customerDaoImpl;
 
 	@Override
 	public int createAccount(Account account) {
@@ -107,7 +113,6 @@ public class AccountDaoImpl implements AccountDao {
 			account.setHash(resultSet.getString("hash"));
 			account.setEmail(resultSet.getString("email"));
 			account.setAccountTypeId(resultSet.getInt("account_type_id"));
-			CustomerDao customerDaoImpl = new CustomerDaoImpl();
 			Customer customer = customerDaoImpl.readCustomerById(resultSet
 					.getInt("customer_id"));
 			account.setCustomer(customer);
@@ -132,7 +137,6 @@ public class AccountDaoImpl implements AccountDao {
 				account.setHash(resultSet.getString("hash"));
 				account.setEmail(resultSet.getString("email"));
 				account.setAccountTypeId(resultSet.getInt("account_type_id"));
-				CustomerDao customerDaoImpl = new CustomerDaoImpl();
 				Customer customer = customerDaoImpl.readCustomerById(resultSet
 						.getInt("customer_id"));
 				account.setCustomer(customer);
@@ -158,7 +162,6 @@ public class AccountDaoImpl implements AccountDao {
 				account.setHash(resultSet.getString("hash"));
 				account.setEmail(resultSet.getString("email"));
 				account.setAccountTypeId(resultSet.getInt("account_type_id"));
-				CustomerDao customerDaoImpl = new CustomerDaoImpl();
 				Customer customer = customerDaoImpl.readCustomerById(resultSet
 						.getInt("customer_id"));
 				account.setCustomer(customer);
