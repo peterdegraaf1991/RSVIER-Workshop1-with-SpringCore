@@ -6,7 +6,7 @@ import model_class.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import dao.DaoFactory;
+import dao.AccountDaoImpl;
 import view.LoginView;
 import utility.Hashing;
 import utility.Hashing.CannotPerformOperationException;
@@ -14,10 +14,10 @@ import utility.Hashing.InvalidHashException;
 
 @Component
 public class LoginController extends Controller {
-// Geen autowire op static methodes?
 	public static Account loggedInAccount = new Account();
 	public static Customer loggedInCustomer = new Customer();
 	
+	@Autowired AccountDaoImpl accountDao;
 	
 	@Autowired
 	private MainController mainController;
@@ -27,8 +27,6 @@ public class LoginController extends Controller {
 
 
 	public void runController() {
-	loginView.useSQLOrMongo();
-		
 		int keuze = 1;
 		Controller.newView = true;
 		do {
@@ -55,11 +53,11 @@ public class LoginController extends Controller {
 	}
 
 	public void checkAccountByEmail() {
-		loggedInAccount = DaoFactory.getAccountDao().readAccountByEmail(loginView
+		loggedInAccount = accountDao.readAccountByEmail(loginView
 				.requestInputUsername());
 		int accountId = loggedInAccount.getId();
 		if (loggedInAccount.getId() != 0) {
-			String hash = DaoFactory.getAccountDao().readHash(accountId);
+			String hash = accountDao.readHash(accountId);
 			try {
 				if (Hashing.verifyPassword(loginView.requestInputPassword(), hash) == true) {
 					loginView.loginSuccesfull();

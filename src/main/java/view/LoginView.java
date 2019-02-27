@@ -2,8 +2,6 @@ package view;
 
 import org.springframework.stereotype.Component;
 
-import dao.DaoFactory;
-
 @Component
 public class LoginView extends View {
 
@@ -63,10 +61,4 @@ public class LoginView extends View {
 		return result;
 	}
 
-	public void useSQLOrMongo() {
-		int input = textIO.newIntInputReader().withDefaultValue(1)
-				.withInlinePossibleValues(1, 2)
-				.read("Do you wish to use SQL(1) or Mongo(2) as database?");
-		new DaoFactory(input);
-	}
 }

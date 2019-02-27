@@ -7,13 +7,19 @@ import org.springframework.stereotype.Component;
 
 import model_class.Account;
 import model_class.Customer;
-import dao.DaoFactory;
+import dao.AccountDaoImpl;
+import dao.CustomerDaoImpl;
+import dao.OrderDaoImpl;
 import view.CustomerView;
 
 @Component
 public class CustomerController extends Controller {
-	@Autowired
-	CustomerView customerView;
+	
+	@Autowired CustomerDaoImpl customerDao;
+	@Autowired AccountDaoImpl accountDao;
+	@Autowired OrderDaoImpl orderDao;
+	
+	@Autowired CustomerView customerView;
 
 	@Override
 	public void runController() {
@@ -58,7 +64,7 @@ public class CustomerController extends Controller {
 	private void viewAllCustomers() {
 		if (workerOrAdminPermission() == false)
 			customerView.noPermission();
-		List<Customer> customerList = DaoFactory.getCustomerDao()
+		List<Customer> customerList = customerDao
 				.readAllCustomers();
 		if (customerList.size() <= 0) {
 			customerView.noCustomerFound();
@@ -109,7 +115,7 @@ public class CustomerController extends Controller {
 			Customer customer = LoginController.loggedInCustomer;
 			return customer;
 		}
-		List<Customer> customerList = DaoFactory.getCustomerDao()
+		List<Customer> customerList = customerDao
 		// .readCustomersByLastname(customerView.RequestSurnameForList());
 				.readAllCustomers();
 		if (customerList.size() <= 0) {
@@ -123,7 +129,7 @@ public class CustomerController extends Controller {
 	}
 
 	private boolean customerIdHasAccount(int customerId) {
-		Account account = DaoFactory.getAccountDao().readAccountByCustomerId(
+		Account account = accountDao.readAccountByCustomerId(
 				customerId);
 		if (account.getId() == 0)
 			return false;
@@ -132,7 +138,7 @@ public class CustomerController extends Controller {
 	}
 
 	private void DeleteCustomer(int customerId) {
-		if (!DaoFactory.getOrderDao().readOrdersOfCustomerId(customerId)
+		if (!orderDao.readOrdersOfCustomerId(customerId)
 				.isEmpty()) {
 			customerView.firstDeleteOrders();
 			return;
@@ -141,7 +147,7 @@ public class CustomerController extends Controller {
 			customerView.firstDeleteAccount();
 
 		else
-			DaoFactory.getCustomerDao().deleteCustomer(customerId);
+			customerDao.deleteCustomer(customerId);
 		// Print succesfull message
 	}
 
@@ -149,7 +155,7 @@ public class CustomerController extends Controller {
 		customer.setFirstname(customerView.requestInputFirstname());
 		customer.setMiddlename(customerView.requestInputMiddlename());
 		customer.setSurname(customerView.RequestInputSurname());
-		DaoFactory.getCustomerDao().updateCustomer(customer);
+		customerDao.updateCustomer(customer);
 		// Print succesfull message
 	}
 
@@ -162,8 +168,8 @@ public class CustomerController extends Controller {
 		customer.setFirstname(customerView.requestInputFirstname());
 		customer.setMiddlename(customerView.requestInputMiddlename());
 		customer.setSurname(customerView.RequestInputSurname());
-		if (DaoFactory.getCustomerDao().CustomerNameExists(customer) == 0)
-			DaoFactory.getCustomerDao().createCustomer(customer);
+		if (customerDao.CustomerNameExists(customer) == 0)
+			customerDao.createCustomer(customer);
 		else {
 			customerView.alreadyExists();
 		}

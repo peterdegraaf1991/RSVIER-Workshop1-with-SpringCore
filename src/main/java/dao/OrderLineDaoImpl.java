@@ -9,11 +9,13 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import utility.DatabaseConnection;
 import model_class.OrderLine;
 import model_class.Product;
 
+@Component
 public class OrderLineDaoImpl implements OrderLineDao {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(OrderLineDaoImpl.class);

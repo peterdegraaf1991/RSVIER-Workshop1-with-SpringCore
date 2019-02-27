@@ -8,11 +8,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import dao.CustomerDaoImpl;
+import dao.OrderDaoImpl;
+import dao.OrderLineDaoImpl;
+import dao.ProductDaoImpl;
 import model_class.Customer;
 import model_class.Order;
 import model_class.OrderLine;
 import model_class.Product;
-import dao.DaoFactory;
 import view.CustomerView;
 import view.OrderLineView;
 import view.OrderView;
@@ -21,26 +24,20 @@ import view.ProductView;
 @Component
 public class OrderController extends Controller {
 
-	@Autowired
-	CustomerController customerController;
 	
-	@Autowired
-	ProductController productController;
+	@Autowired OrderDaoImpl orderDao;
+	@Autowired OrderLineDaoImpl orderLineDao;
+	@Autowired ProductDaoImpl productDao;
+	@Autowired CustomerDaoImpl customerDao;
 	
-	@Autowired
-	OrderLineController orderLineController;
+	@Autowired CustomerController customerController;
+	@Autowired ProductController productController;
+	@Autowired OrderLineController orderLineController;
 
-	@Autowired
-	OrderView orderView;
-	
-	@Autowired
-	CustomerView customerView;
-	
-	@Autowired
-	OrderLineView orderLineView;
-	
-	@Autowired
-	ProductView productView;
+	@Autowired OrderView orderView;
+	@Autowired CustomerView customerView;
+	@Autowired OrderLineView orderLineView;
+	@Autowired ProductView productView;
 	
 
 	@Override
@@ -90,7 +87,7 @@ public class OrderController extends Controller {
 	private void viewAllOrders() {
 		if (workerOrAdminPermission() == false)
 			orderView.noPermission();
-		List<Order> list = DaoFactory.getOrderDao().readAllOrders();
+		List<Order> list = orderDao.readAllOrders();
 		if (list.size() <= 0) {
 			orderView.noOrdersFound();
 			return;
@@ -149,14 +146,13 @@ public class OrderController extends Controller {
 	}
 
 	private void viewProductsOfOrder(Order order) {
-		List<OrderLine> listOrderLines = DaoFactory.getOrderLineDao()
-				.readOrderLinesOfOrderId(order.getId());
+		List<OrderLine> listOrderLines = orderLineDao.readOrderLinesOfOrderId(order.getId());
 			orderLineView.printOrderLineListWithoutOption(listOrderLines);
 	}
 
 	private void deleteOrder(Order order) {
 		if (order != null) {
-			DaoFactory.getOrderDao().deleteOrder(order.getId());
+			orderDao.deleteOrder(order.getId());
 			// add amount back to stock has to be added here
 			orderView.orderSuccesfullyDeleted();
 		}
@@ -171,10 +167,10 @@ public class OrderController extends Controller {
 				.createOrderLines(orderId);
 		BigDecimal totalCost = calculateTotalCost(orderLineList);
 		productController.updateStock(orderLineList);
-		Order order = DaoFactory.getOrderDao().readOrderById(orderId);
+		Order order = orderDao.readOrderById(orderId);
 		order.setTotalCost(totalCost);
 		order.setDate(LocalDateTime.now());
-		DaoFactory.getOrderDao().updateOrder(order);
+		orderDao.updateOrder(order);
 	}
 
 	public int createNewOrderId(Customer customer) {
@@ -182,7 +178,7 @@ public class OrderController extends Controller {
 		order.setCustomer(customer);
 		order.setDate(LocalDateTime.now());
 		order.setTotalCost(new BigDecimal(0));
-		int generatedId = DaoFactory.getOrderDao().createOrder(order);
+		int generatedId = orderDao.createOrder(order);
 		return generatedId;
 	}
 
@@ -190,7 +186,7 @@ public class OrderController extends Controller {
 		BigDecimal totalCost = new BigDecimal(0);
 		for (int i = 0; i < list.size(); i++) {
 			int productId = list.get(i).getProduct().getId();
-			Product product = DaoFactory.getProductDao().readProductById(productId);
+			Product product = productDao.readProductById(productId);
 			totalCost = totalCost.add(product.getPrice().multiply(
 					new BigDecimal(list.get(i).getAmount())));
 		}
@@ -198,7 +194,7 @@ public class OrderController extends Controller {
 	}
 
 	private Customer selectCustomersWithOrder() {
-		List<Integer> customerIdList = DaoFactory.getOrderDao().readCustomerIdsWithOrder();
+		List<Integer> customerIdList = orderDao.readCustomerIdsWithOrder();
 		if (workerOrAdminPermission() == false) {
 			if (customerIdList.contains(LoginController.loggedInCustomer
 					.getId()) == true)
@@ -212,7 +208,7 @@ public class OrderController extends Controller {
 		}
 		List<Customer> customerList = new ArrayList<>();
 		for (int i = 0; i < customerIdList.size(); i++) {
-			Customer customer = DaoFactory.getCustomerDao().readCustomerById(customerIdList
+			Customer customer = customerDao.readCustomerById(customerIdList
 					.get(i));
 			customerList.add(customer);
 		}
@@ -230,7 +226,7 @@ public class OrderController extends Controller {
 		if (customer == null) {
 			return null;
 		}
-		List<Order> orderList = DaoFactory.getOrderDao().readOrdersOfCustomerId(customer
+		List<Order> orderList = orderDao.readOrdersOfCustomerId(customer
 				.getId());
 			orderView.printOrderList(orderList);
 		int option = orderView.chooseOrder(orderList.size());
@@ -240,23 +236,22 @@ public class OrderController extends Controller {
 	private void changeTotalCost(Order order) {
 		BigDecimal newTotalCost = orderView.requestTotalCost();
 		order.setTotalCost(newTotalCost);
-		DaoFactory.getOrderDao().updateOrder(order);
+		orderDao.updateOrder(order);
 		orderView.totalCostUpdated();
 	}
 
 	private void updateTotalCostOfOrder(Order order) {
-		List<OrderLine> listOrderLines = DaoFactory.getOrderLineDao()
-				.readOrderLinesOfOrderId(order.getId());
+		List<OrderLine> listOrderLines = orderLineDao.readOrderLinesOfOrderId(order.getId());
 		BigDecimal newTotalCost = calculateTotalCost(listOrderLines);
 		order.setTotalCost(newTotalCost);
-		DaoFactory.getOrderDao().updateOrder(order);
+		orderDao.updateOrder(order);
 	}
 
 	private void changeProducts(Order order) {
 		OrderLine orderLine = selectOrderLineFromOrder(order);
 		int oldProductId = orderLine.getProduct().getId();
 		int oldAmount = orderLine.getAmount();
-		Product oldProduct = DaoFactory.getProductDao().readProductById(oldProductId);
+		Product oldProduct = productDao.readProductById(oldProductId);
 		Product newProduct = productController.selectProductFromList();
 		int newProductCurrentStock = newProduct.getStock();
 
@@ -267,28 +262,26 @@ public class OrderController extends Controller {
 			orderLine.setAmount(newProductAmount);
 			int oldProductStock = oldProduct.getStock();
 			oldProduct.setStock(oldProductStock + oldAmount);
-			DaoFactory.getProductDao().updateProduct(oldProduct);
+			productDao.updateProduct(oldProduct);
 			newProduct.setStock(newProductCurrentStock - newProductAmount);
-			DaoFactory.getProductDao().updateProduct(newProduct);
+			productDao.updateProduct(newProduct);
 		}
 		if (oldProduct.equals(newProduct) == true) {
 			int newProductAmount = orderLineView.requestAmount(oldProduct
 					.getStock() + oldAmount);
 			orderLine.setAmount(newProductAmount);
 			newProduct.setStock(newProductCurrentStock + (oldAmount - newProductAmount));
-			DaoFactory.getProductDao().updateProduct(newProduct);
+			productDao.updateProduct(newProduct);
 		}
 		orderLine.setProduct(newProduct);
-		DaoFactory.getOrderLineDao().updateOrderLine(orderLine);
+		orderLineDao.updateOrderLine(orderLine);
 		updateTotalCostOfOrder(order);
 	}
 
 	// OrderLine Controller
 	private OrderLine selectOrderLineFromOrder(Order order) {
-		List<OrderLine> listOrderLines = DaoFactory.getOrderLineDao()
-				.readOrderLinesOfOrderId(order.getId());
-		
-			orderLineView.printOrderLineList(listOrderLines);
+		List<OrderLine> listOrderLines = orderLineDao.readOrderLinesOfOrderId(order.getId());
+		orderLineView.printOrderLineList(listOrderLines);
 					
 		int option = orderView
 				.chooseProductFromOrderLine(listOrderLines.size());
@@ -296,7 +289,7 @@ public class OrderController extends Controller {
 	}
 
 	public String getCustomerNameOfOrder(int customerId) {
-		Customer customer = DaoFactory.getCustomerDao().readCustomerById(customerId);
+		Customer customer = customerDao.readCustomerById(customerId);
 		return customer.toString();
 	}
 }

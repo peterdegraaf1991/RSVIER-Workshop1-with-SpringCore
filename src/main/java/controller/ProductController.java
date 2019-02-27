@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import model_class.OrderLine;
 import model_class.Product;
-import dao.DaoFactory;
+import dao.ProductDaoImpl;
 import view.ProductView;
 
 @Component
@@ -15,6 +15,9 @@ public class ProductController extends Controller {
 	
 	@Autowired
 	ProductView productView;
+	
+	@Autowired
+	ProductDaoImpl productDao;
 
 	@Override
 	public void runController() {
@@ -76,7 +79,7 @@ public class ProductController extends Controller {
 		product.setName(productView.requestName());
 		product.setPrice(productView.requestPrice());
 		product.setStock(productView.requestStock());
-		DaoFactory.getProductDao().updateProduct(product);
+		productDao.updateProduct(product);
 		// Print succes message
 	}
 
@@ -85,7 +88,7 @@ public class ProductController extends Controller {
 		if (product == null)
 			return;
 
-			String error = DaoFactory.getProductDao().deleteProduct(product.getId());
+			String error = productDao.deleteProduct(product.getId());
 			productView.printMessage(error);
 		}
 
@@ -103,13 +106,12 @@ public class ProductController extends Controller {
 		product.setName(productView.requestName());
 		product.setPrice(productView.requestPrice());
 		product.setStock(productView.requestStock());
-		DaoFactory.getProductDao().createProduct(product);
+		productDao.createProduct(product);
 		// Print succes message
 	}
 
 	private List<Product> printProductlist() {
-		List<Product> productList = DaoFactory.getProductDao()
-				.readAllProducts();
+		List<Product> productList = productDao.readAllProducts();
 		if (productList.size() <= 0) {
 			productView.noProductFound();
 			return null;
@@ -119,8 +121,7 @@ public class ProductController extends Controller {
 	}
 
 	private List<Product> printProductListWithoutOption() {
-		List<Product> productList = DaoFactory.getProductDao()
-				.readAllProducts();
+		List<Product> productList = productDao.readAllProducts();
 		if (productList.size() <= 0) {
 			productView.noProductFound();
 			return null;
@@ -131,10 +132,9 @@ public class ProductController extends Controller {
 	public void updateStock(List<OrderLine> list) {
 		for (int i = 0; i < list.size(); i++) {
 			int productId = list.get(i).getProduct().getId();
-			Product product = DaoFactory.getProductDao().readProductById(
-					productId);
+			Product product = productDao.readProductById(productId);
 			product.setStock(product.getStock() - list.get(i).getAmount());
-			DaoFactory.getProductDao().updateProduct(product);
+			productDao.updateProduct(product);
 		}
 	}
 

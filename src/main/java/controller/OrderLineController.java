@@ -6,7 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import dao.DaoFactory;
+import dao.OrderLineDaoImpl;
+import dao.ProductDaoImpl;
 import view.OrderLineView;
 import model_class.OrderLine;
 import model_class.Product;
@@ -14,6 +15,12 @@ import model_class.Product;
 @Component
 public class OrderLineController {
 
+	@Autowired
+	ProductDaoImpl productDao;
+	
+	@Autowired
+	OrderLineDaoImpl orderLineDao;
+	
 	@Autowired
 	ProductController productController;
 	
@@ -38,7 +45,7 @@ public class OrderLineController {
 				orderLine.setAmount(orderLineView.requestAmount(product
 						.getStock()));
 				orderLine.setOrderId(orderId);
-				DaoFactory.getOrderLineDao().createOrderLine(orderLine);
+				orderLineDao.createOrderLine(orderLine);
 				System.out.println("OrderLineList is before: " + orderLineList);
 				orderLineList.add(orderLine);
 				System.out.println("OrderLineList is after: " + orderLineList);
@@ -53,7 +60,7 @@ public class OrderLineController {
 
 	public String getProductNameOfOrderLine(OrderLine orderLine) {
 		int productId = orderLine.getProduct().getId();
-		String productName = DaoFactory.getProductDao().readProductById(productId)
+		String productName = productDao.readProductById(productId)
 				.getName();
 		return productName;
 	}

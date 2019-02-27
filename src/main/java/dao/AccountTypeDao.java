@@ -2,6 +2,7 @@ package dao;
 
 import model_class.AccountType;
 
+
 public interface AccountTypeDao {
 
 	public void createAccountType(AccountType accountType);

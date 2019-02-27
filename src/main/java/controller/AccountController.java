@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.*;
 
+import dao.AccountDaoImpl;
 import jline.internal.Log;
 import model_class.Account;
 import model_class.Customer;
-import dao.DaoFactory;
 import utility.Hashing;
 import utility.Hashing.CannotPerformOperationException;
 import view.AccountView;
@@ -19,14 +19,12 @@ import view.LoginView;
 
 @Component
 public class AccountController extends Controller {
-	@Autowired 
-	AccountView accountView;
+	@Autowired AccountDaoImpl accountDao;
 	
-	@Autowired 
-	CustomerController customerController;
+	@Autowired AccountView accountView;
+	@Autowired LoginView loginView;
 	
-	@Autowired 
-	LoginView loginView;
+	@Autowired CustomerController customerController;
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AccountController.class);
@@ -83,7 +81,7 @@ public class AccountController extends Controller {
 	private void viewAllAccounts() {
 		if (!workerOrAdminPermission())
 			accountView.noPermission();
-		List<Account> accountList = DaoFactory.getAccountDao()
+		List<Account> accountList = accountDao
 				.readAllAccounts();
 		if (accountList.size() <= 0) {
 			accountView.noAccountFound();
@@ -95,21 +93,21 @@ public class AccountController extends Controller {
 	private void deleteAccount() {
 		if (!workerOrAdminPermission()) {
 			if (accountView.confirmDeleteAccount())
-				DaoFactory.getAccountDao().deleteAccount(
+				accountDao.deleteAccount(
 						LoginController.loggedInAccount.getId());
 			System.exit(0);
 		}
 		if (workerOrAdminPermission()) {
 			Customer customer = customerController.choosePersonFromList();
-			Account account = DaoFactory.getAccountDao()
+			Account account = accountDao
 					.readAccountByCustomerId(customer.getId());
 			if (account.equals(LoginController.loggedInAccount)) {
 				if (accountView.confirmDeleteAccount()) {
-					DaoFactory.getAccountDao().deleteAccount(account.getId());
+					accountDao.deleteAccount(account.getId());
 					System.exit(0);
 				}
 			} else {
-				DaoFactory.getAccountDao().deleteAccount(account.getId());
+				accountDao.deleteAccount(account.getId());
 				accountView.accountDeleted();
 			}
 		}
@@ -123,7 +121,7 @@ public class AccountController extends Controller {
 		if (customer == null) {
 			return;
 		}
-		if (DaoFactory.getAccountDao()
+		if (accountDao
 				.readAccountByCustomerId(customer.getId()).getId() != 0) {
 			accountView.personAlreadyHasAccount();
 			return;
@@ -141,7 +139,7 @@ public class AccountController extends Controller {
 		account.setHash(hash);
 		int accountTypeId = accountView.requestAccountType();
 		account.setAccountTypeId(accountTypeId);
-		DaoFactory.getAccountDao().createAccount(account);
+		accountDao.createAccount(account);
 		accountView.accountCreated();
 		Controller.newView = true;
 	}
@@ -151,7 +149,7 @@ public class AccountController extends Controller {
 		if (customer == null) {
 			return;
 		}
-		Account account = DaoFactory.getAccountDao().readAccountByCustomerId(
+		Account account = accountDao.readAccountByCustomerId(
 				customer.getId());
 		if (account.getId() == 0) {
 			accountView.noAccountFound();
@@ -164,7 +162,7 @@ public class AccountController extends Controller {
 			LOG.info("Error",e);
 		}
 		account.setHash(hash);
-		DaoFactory.getAccountDao().updateAccount(account);
+		accountDao.updateAccount(account);
 		accountView.passwordChanged();
 	}
 
@@ -173,14 +171,14 @@ public class AccountController extends Controller {
 		if (customer == null) {
 			return;
 		}
-		Account account = DaoFactory.getAccountDao().readAccountByCustomerId(
+		Account account = accountDao.readAccountByCustomerId(
 				customer.getId());
 		if (account.getId() == 0) {
 			accountView.noAccountFound();
 			return;
 		}
 		account.setEmail(accountView.requestInputUsername());
-		DaoFactory.getAccountDao().updateAccount(account);
+		accountDao.updateAccount(account);
 		accountView.emailChanged();
 	}
 
