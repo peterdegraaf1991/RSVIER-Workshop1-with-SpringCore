@@ -23,6 +23,16 @@ public class DaoFactory {
 			productDao = new ProductDaoImpl();
 			break;
 			
+		case 2:
+			System.out.println("entering DAOFactory case 2");
+			accountDao = new AccountDaoImplMongo();
+			accountTypeDao = new AccountTypeDaoImplMango();
+			customerDao = new CustomerDaoImplMongo();
+			orderDao = new OrderDaoImplMongo();
+			orderLineDao = new OrderLineDaoImplMongo();
+			productDao = new ProductDaoImplMongo();
+			break;
+			
 		default:
 			//temp.
 			System.out.println("Invalid input");

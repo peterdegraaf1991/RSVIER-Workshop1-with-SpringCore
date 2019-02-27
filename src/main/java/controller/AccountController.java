@@ -27,7 +27,6 @@ public class AccountController extends Controller {
 	
 	@Autowired 
 	LoginView loginView;
-
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AccountController.class);

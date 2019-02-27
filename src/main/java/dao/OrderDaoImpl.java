@@ -9,22 +9,16 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import utility.DatabaseConnection;
 import model_class.Customer;
 import model_class.Order;
 
-@Component
 public class OrderDaoImpl implements OrderDao {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(OrderDaoImpl.class);
 
-	@Autowired
-	CustomerDao customerDaoImpl;
-	
 	@Override
 	public int createOrder(Order order) {
 		String query = "INSERT INTO `order` (total_cost, date, customer_id) VALUES(?,?,?)";
@@ -101,9 +95,15 @@ public class OrderDaoImpl implements OrderDao {
 			order.setTotalCost(resultSet.getBigDecimal("total_cost"));
 			order.setDate(resultSet.getTimestamp("date").toLocalDateTime());
 
+			CustomerDao customerDaoImpl = new CustomerDaoImpl();
 			Customer customer = customerDaoImpl.readCustomerById(resultSet
 					.getInt("customer_id"));
 			order.setCustomer(customer);
+
+			// OrderLineDao orderLineDaoImpl = new OrderLineDaoImpl();
+			// List<OrderLine> orderLineList =
+			// orderLineDaoImpl.readOrderLinesOfOrderId(resultSet.getInt("id"));
+			// order.setOrderLines(orderLineList);
 		}
 
 		catch (SQLException e) {
